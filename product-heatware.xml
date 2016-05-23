@@ -160,14 +160,15 @@ if ($helper->show_profile_tab($vbulletin->GPC['userid']))
     <plugin active="1" executionorder="5" product="heatware">
     <title>HeatWare Postbit Display</title>
     <hookname>postbit_display_complete</hookname>
-    <phpcode><![CDATA[require_once(DIR . '/heatware_common.php');
+    <phpcode><![CDATA[
+require_once(DIR . '/heatware_common.php');
 $helper = new HW_Helper($configAll);
 $field = 'field' . $helper->get_fieldnum();
 if(strtolower($post[$field]) == 'yes')
 {
-   $row = vB::$db->query_first("SELECT * from ".TABLE_PREFIX.$hwconfig['stats_table']." WHERE userid=".$post['userid']);
+   $row = vB::$db->query_first("SELECT * from ".TABLE_PREFIX."hw_stats WHERE userid='{$post['userid']}'");
    
-   if(isset($row['eval_total']) && $row['eval_total'] != '')
+if(isset($row['eval_total']) && $row['eval_total'] != '')
 {
  $template_hook['postbit_userinfo_right_after_posts'] .= "<dt>HeatWare</dt> <dd><a href=\"http://www.heatware.com/u/{$row['heatware_user_id']}\" target=\"_blank\">{$row['eval_pos']}-{$row['eval_neu']}-{$row['eval_neg']}</a></dd>";
 }

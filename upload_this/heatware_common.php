@@ -55,7 +55,7 @@ class HW_Helper
         $row = $vbulletin->db->query_first('
 			SELECT phrase.*
 			FROM ' . TABLE_PREFIX . "phrase AS phrase
-			WHERE text = '{$this->config['profile_field_label']}' AND fieldname='cprofilefield' AND product='heatware'
+			WHERE fieldname='cprofilefield' AND product='heatware' LIMIT 1
 	");
 
         return preg_replace('/[^0-9]/', '', $row['varname']);
