@@ -18,7 +18,8 @@ $row = $helper->get_stats_by_forum_user_id($vbulletin->GPC['userid']);
     <div class="blockbody subsection userprof_content userprof_content_border">
         <?=$helper->display_profile_name_value('Username', $row['username'] . '&nbsp;&nbsp;<a href="http://www.heatware.com/u/'.$row['heatware_user_id'] . '" target="_blank"><small>[View Full Profile]</small></a>');?>        
         <?=$helper->display_profile_name_value('Account Status', $row['account_status']);?>        
-        <?=$helper->display_profile_name_value('Rank', $row['rank']);?>    
+        <?=$helper->display_profile_name_value('Member Since', date('F j, Y', strtotime($row['member_since'])));?> 
+        <?=$helper->display_profile_name_value('Global Rank', '#' . $row['rank']);?>   
      </div>
     <div class="blocksubhead subsectionhead userprof_headers userprof_headers_border">
         <h4 class="subsectionhead-understate">User Feedback</h4>

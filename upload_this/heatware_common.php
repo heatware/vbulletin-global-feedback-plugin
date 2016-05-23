@@ -96,6 +96,7 @@ class HW_Helper
             if ($response = $this->api_get_stats($row['heatware_user_id'])) {
                 $vbulletin->db->query_write('UPDATE '.TABLE_PREFIX."{$this->config['stats_table']} SET
 				username='{$response->profile->username}',
+                member_since='{$response->profile->memberSince}',
 				eval_total={$response->profile->feedback->numTotal},
 				eval_pos={$response->profile->feedback->numPositive},
 				eval_neg={$response->profile->feedback->numNegative},

@@ -23,7 +23,8 @@ $vbulletin->db->query_write("
         CREATE TABLE `".TABLE_PREFIX."{$hwconfig['stats_table']}` (
         `userid` int(10) UNSIGNED NOT NULL,
         `heatware_user_id` int(10) UNSIGNED NULL DEFAULT NULL,
-        `username` varchar(100) NULL DEFAULT NULL,
+        `username` varchar(50) NULL DEFAULT NULL,
+        `member_since` varchar(30) NULL DEFAULT NULL,
         `eval_total` int(6) UNSIGNED NULL DEFAULT NULL,
         `eval_pos` int(6) UNSIGNED NULL DEFAULT NULL,
         `eval_neu` int(6) UNSIGNED NULL DEFAULT NULL,
