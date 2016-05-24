@@ -12,8 +12,7 @@ $preInstall['profile_field_description'] = "Display your HeatWare feedback stats
 
 
 $hwconfig['api_key'] = $API_KEY;
-$hwconfig['api_find_user'] = 'http://local.heatware.com/api/findUser';
-$hwconfig['api_get_stats'] = 'http://local.heatware.com/api/user';
-$hwconfig['api_phone_home'] = 'http://local.heatware.com/api/phoneHome';
-$hwconfig['stats_table'] = 'hw_stats'; // DO NOT MODIFY
+$hwconfig['api_find_user'] = 'http://www.heatware.com/api/findUser';
+$hwconfig['api_get_stats'] = 'http://www.heatware.com/api/user';
+$hwconfig['api_phone_home'] = 'http://www.heatware.com/api/phoneHome';
 $configAll = array_merge($preInstall, $hwconfig);

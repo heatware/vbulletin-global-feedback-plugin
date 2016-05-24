@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <product productid="heatware" active="1">
     <title>HeatWare User Feedback</title>
-    <description>Integration with HeatWare.com's' Global Feedback System</description>
+    <description>Official Plugin For HeatWare.com Global User Feedback</description>
     <version>1.0.0</version>
     <url><![CDATA[http://github.com/heatware/vbulletin-feedback-plugin]]></url>
-    <versioncheckurl><![CDATA[http://www.heatware.com/home/vbulletin_plugin_version_check]]></versioncheckurl>
+    <versioncheckurl><![CDATA[http://www.heatware.com/tools/vbulletin_plugin_version_check]]></versioncheckurl>
     <dependencies>
         <dependency dependencytype="vbulletin" minversion="4.2.3" maxversion="" />
     </dependencies>
@@ -20,7 +20,7 @@ require_once('./heatware_common.php');
 
 $dbalter = new vB_Database_Alter_MySQL($db);
 $vbulletin->db->query_write("
-        CREATE TABLE `".TABLE_PREFIX."{$hwconfig['stats_table']}` (
+        CREATE TABLE `".TABLE_PREFIX."heatware_stats` (
         `userid` int(10) UNSIGNED NOT NULL,
         `heatware_user_id` int(10) UNSIGNED NULL DEFAULT NULL,
         `username` varchar(50) NULL DEFAULT NULL,
@@ -92,7 +92,7 @@ $dbalter = new vB_Database_Alter_MySQL($db);
 $fieldnum = $helper->get_fieldnum(); 
 $fieldstr = 'field' . $fieldnum; 
 
-$vbulletin->db->query_write("DROP table `".TABLE_PREFIX."{$hwconfig['stats_table']}`");
+$vbulletin->db->query_write("DROP table `".TABLE_PREFIX."heatware_stats`");
 $vbulletin->db->query_write("DELETE FROM " . TABLE_PREFIX . "profilefield  WHERE profilefieldid = " . $fieldnum); 
 $vbulletin->db->query_write("DELETE FROM " . TABLE_PREFIX . "phrase WHERE product='heatware'"); 
 $vbulletin->db->query_write("ALTER TABLE`" . TABLE_PREFIX . "userfield` DROP COLUMN " . $fieldstr);  
@@ -115,7 +115,7 @@ build_profilefield_cache();
     </templates>
     <plugins>
         <plugin active="1" executionorder="5" product="vbulletin">
-            <title>Heatware Profile Tab</title>
+            <title>HeatWare Profile Tab</title>
             <hookname>member_complete</hookname>
             <phpcode><![CDATA[
                
@@ -166,7 +166,7 @@ $helper = new HW_Helper($configAll);
 $field = 'field' . $helper->get_fieldnum();
 if(strtolower($post[$field]) == 'yes')
 {
-   $row = vB::$db->query_first("SELECT * from ".TABLE_PREFIX."hw_stats WHERE userid='{$post['userid']}'");
+   $row = vB::$db->query_first("SELECT * from ".TABLE_PREFIX."heatware_stats WHERE userid='{$post['userid']}'");
    
 if(isset($row['eval_total']) && $row['eval_total'] != '')
 {

@@ -64,7 +64,7 @@ class HW_Helper
     public function get_stats_by_forum_user_id($user_id)
     {
         global $vbulletin;
-        $row = $vbulletin->db->query_first('SELECT * from '.TABLE_PREFIX."{$this->config['stats_table']} WHERE userid='$user_id'");
+        $row = $vbulletin->db->query_first('SELECT * from '.TABLE_PREFIX."heatware_stats WHERE userid='$user_id'");
 
         return $row;
     }
@@ -72,7 +72,7 @@ class HW_Helper
     public function get_stats_by_heatware_user_id($user_id)
     {
         global $vbulletin;
-        $row = $vbulletin->db->query_first('SELECT * from '.TABLE_PREFIX."{$this->config['stats_table']} WHERE heatware_id='$user_id");
+        $row = $vbulletin->db->query_first('SELECT * from '.TABLE_PREFIX."heatware_stats WHERE heatware_id='$user_id");
 
         return $row;
     }
@@ -82,8 +82,8 @@ class HW_Helper
         global $vbulletin;
 
         $field = 'field' . $this->get_fieldnum();
-        $vbulletin->db->query_write('INSERT INTO '.TABLE_PREFIX."{$this->config['stats_table']}  (userid) (SELECT userid FROM ".TABLE_PREFIX."userfield WHERE LOWER({$field})='yes' AND userid NOT IN (SELECT userid FROM ".TABLE_PREFIX."{$this->config['stats_table']}) )");
-        $row = $vbulletin->db->query_write('DELETE FROM '.TABLE_PREFIX."{$this->config['stats_table']} WHERE userid IN (SELECT userid FROM ".TABLE_PREFIX."userfield WHERE {$field}= '' OR LOWER({$field})='no')");
+        $vbulletin->db->query_write('INSERT INTO '.TABLE_PREFIX."heatware_stats  (userid) (SELECT userid FROM ".TABLE_PREFIX."userfield WHERE LOWER({$field})='yes' AND userid NOT IN (SELECT userid FROM ".TABLE_PREFIX."heatware_stats) )");
+        $row = $vbulletin->db->query_write('DELETE FROM '.TABLE_PREFIX."heatware_stats WHERE userid IN (SELECT userid FROM ".TABLE_PREFIX."userfield WHERE {$field}= '' OR LOWER({$field})='no')");
     }
 
     public function fetch_heatware_stats()
@@ -91,10 +91,10 @@ class HW_Helper
         global $vbulletin;
         $secs_since_last_update = 86400;    //	1 day
                 $limit = 50;
-        $query = $vbulletin->db->query_read('SELECT userid, heatware_user_id FROM '.TABLE_PREFIX."{$this->config['stats_table']} WHERE heatware_user_id > 0 AND last_updated_at < (UNIX_TIMESTAMP() - {$secs_since_last_update}) ORDER by last_updated_at ASC LIMIT {$limit}");
+        $query = $vbulletin->db->query_read('SELECT userid, heatware_user_id FROM '.TABLE_PREFIX."heatware_stats WHERE heatware_user_id > 0 AND last_updated_at < (UNIX_TIMESTAMP() - {$secs_since_last_update}) ORDER by last_updated_at ASC LIMIT {$limit}");
         while ($row = $query->fetch_array()) {
             if ($response = $this->api_get_stats($row['heatware_user_id'])) {
-                $vbulletin->db->query_write('UPDATE '.TABLE_PREFIX."{$this->config['stats_table']} SET
+                $vbulletin->db->query_write('UPDATE '.TABLE_PREFIX."heatware_stats SET
 				username='{$response->profile->username}',
                 member_since='{$response->profile->memberSince}',
 				eval_total={$response->profile->feedback->numTotal},
@@ -114,14 +114,14 @@ class HW_Helper
     {
         global $vbulletin;
         $limit = 50;
-        $query = $vbulletin->db->query_read('SELECT h.userid, u.email FROM '.TABLE_PREFIX."{$this->config['stats_table']} h JOIN ".TABLE_PREFIX."user u ON h.userid=u.userid WHERE heatware_user_id IS NULL OR heatware_user_id = '' ORDER by last_error_at ASC LIMIT {$limit}");
+        $query = $vbulletin->db->query_read('SELECT h.userid, u.email FROM '.TABLE_PREFIX."heatware_stats h JOIN ".TABLE_PREFIX."user u ON h.userid=u.userid WHERE u.usergroupid != 3 AND heatware_user_id IS NULL OR heatware_user_id = '' ORDER by last_error_at ASC LIMIT {$limit}");
 
         while ($row = $query->fetch_array()) {
             {
                 if ($heatware_user_id = $this->api_find_user_by_email($row['email'])) {
-                    $vbulletin->db->query_write('UPDATE '.TABLE_PREFIX."{$this->config['stats_table']} SET heatware_user_id={$heatware_user_id}, last_error_at='0' WHERE userid={$row['userid']}");
+                    $vbulletin->db->query_write('UPDATE '.TABLE_PREFIX."heatware_stats SET heatware_user_id={$heatware_user_id}, last_error_at='0' WHERE userid={$row['userid']}");
                 } else {
-                    $vbulletin->db->query_write('UPDATE '.TABLE_PREFIX."{$this->config['stats_table']} SET last_error_at=UNIX_TIMESTAMP() WHERE userid={$row['userid']}");
+                    $vbulletin->db->query_write('UPDATE '.TABLE_PREFIX."heatware_stats SET last_error_at=UNIX_TIMESTAMP() WHERE userid={$row['userid']}");
                 }
             }
         }
@@ -159,10 +159,10 @@ class HW_Helper
     {
         global $vbulletin;
 
-        $total_hw_table = $vbulletin->db->query_first('SELECT count(*) as count FROM '.TABLE_PREFIX."{$this->config['stats_table']}");
-        $no_hw_id = $vbulletin->db->query_first('SELECT count(*) as count FROM '.TABLE_PREFIX."{$this->config['stats_table']} WHERE heatware_user_id IS NULL OR heatware_user_id = ''");
-        $has_stats = $vbulletin->db->query_first('SELECT count(*) as count FROM '.TABLE_PREFIX."{$this->config['stats_table']} WHERE heatware_user_id > 0 AND eval_total IS NOT NULL");
-        $no_stats = $vbulletin->db->query_first('SELECT count(*) as count FROM '.TABLE_PREFIX."{$this->config['stats_table']} WHERE heatware_user_id > 0 AND eval_total IS NULL");
+        $total_hw_table = $vbulletin->db->query_first('SELECT count(*) as count FROM '.TABLE_PREFIX."heatware_stats");
+        $no_hw_id = $vbulletin->db->query_first('SELECT count(*) as count FROM '.TABLE_PREFIX."heatware_stats WHERE heatware_user_id IS NULL OR heatware_user_id = ''");
+        $has_stats = $vbulletin->db->query_first('SELECT count(*) as count FROM '.TABLE_PREFIX."heatware_stats WHERE heatware_user_id > 0 AND eval_total IS NOT NULL");
+        $no_stats = $vbulletin->db->query_first('SELECT count(*) as count FROM '.TABLE_PREFIX."heatware_stats WHERE heatware_user_id > 0 AND eval_total IS NULL");
 
         $postData = array(
                     'site_url' => $vbulletin->options['bburl'],
