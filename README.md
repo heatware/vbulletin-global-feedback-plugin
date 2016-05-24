@@ -2,14 +2,17 @@ Official HeatWare Plugin for vBulletin
 ======
 Since 1999, [HeatWare](http://wwww.heatware.com) has provided free use of its user feedback system, enabling forum users to buy/sell/trade with confidence. We have officially released a vBulletin plugin that allows forums to display user feedback statistics from HeatWare in the user's forum profile. HeatWare is a ***global*** feedback system, therefore there is no need to build reputation on EACH forum you visit.
 
+## Compatibility 
+* **Supported:** 4.2.3
+* **Not Supported:** 5.x
+
 ## Download
 * [Version 1.0](link)
 
-## Usage
-```$ git clone https://github.com/username/software-project.git
-...```
-
-## Contributors
+## Installation
+* Download the latest release and unzip the package
+* Upload the contents of the folder ***upload_this*** to the vBulletin root folder
+* Open ***heatware_config.php*** and enter the API key that you obtained after contacting HeatWare
 
 ## Contact
 #### heat23
