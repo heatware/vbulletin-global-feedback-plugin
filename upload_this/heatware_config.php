@@ -1,6 +1,6 @@
 <?
 
-$API_KEY = ''; // REQUIRED: Enter the API key that you obtained from www.heatware.com
+$API_KEY = ''; // REQUIRED: Enter the API key that you obtained from www.heatware.com (heatware.support [at] gmail.com)
 
 $preInstall = array();
 $hwconfig = array();
