@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<product productid="heatware" active="1">
+    <title>HeatWare User Feedback</title>
+    <description>Official Plugin For HeatWare.com Global User Feedback</description>
+    <version>1.0.0</version>
+    <url><![CDATA[http://github.com/heatware/vbulletin-feedback-plugin]]></url>
+    <versioncheckurl><![CDATA[http://www.heatware.com/tools/vbulletin_plugin_version_check]]></versioncheckurl>
+    <dependencies>
+        <dependency dependencytype="vbulletin" minversion="4.2.3" maxversion="" />
+    </dependencies>
+    <codes>
+        <code version="1.0.0">
+            <installcode>
+                <![CDATA[
+$vbulletin->db->hide_errors();
+
+require_once('./includes/class_dbalter.php');
+require_once('./heatware_config.php');
+require_once('./heatware_common.php');
+
+$dbalter = new vB_Database_Alter_MySQL($db);
+$vbulletin->db->query_write("
+        CREATE TABLE `".TABLE_PREFIX."heatware_stats` (
+        `userid` int(10) UNSIGNED NOT NULL,
+        `heatware_user_id` int(10) UNSIGNED NULL DEFAULT NULL,
+        `username` varchar(50) NULL DEFAULT NULL,
+        `member_since` varchar(30) NULL DEFAULT NULL,
+        `eval_total` int(6) UNSIGNED NULL DEFAULT NULL,
+        `eval_pos` int(6) UNSIGNED NULL DEFAULT NULL,
+        `eval_neu` int(6) UNSIGNED NULL DEFAULT NULL,
+        `eval_neg` int(6) UNSIGNED NULL DEFAULT NULL,
+        `rank` int(10) UNSIGNED NULL DEFAULT NULL,
+        `account_status` varchar(25) NULL DEFAULT NULL,
+        `last_error_at` int(10) UNSIGNED DEFAULT '0',
+        `last_updated_at` int(10) UNSIGNED DEFAULT '0',
+        PRIMARY KEY (`userid`),
+        KEY `forum_user_id` (`userid`),
+        KEY `heatware_user_id` (`heatware_user_id`)
+        )
+  ");
+$vbulletin->db->show_errors();
+			
+            
+   $vbulletin->db->query_write("INSERT INTO " . TABLE_PREFIX . "profilefield 
+        ( 
+            maxlength, size, type, data, def, searchable, memberlist, form 
+        ) 
+    VALUES 
+        ( 
+            5, 5, 'radio', 'a:2:{i:0;s:3:\"Yes\";i:1;s:2:\"No\";}', 0, 0, 0, 0 
+        ) 
+"); 
+
+$profiledata = $vbulletin->db->query_read("SELECT MAX(profilefieldid) AS profilefieldid FROM " . TABLE_PREFIX . "profilefield"); 
+$thisrow = $db->fetch_array($profiledata); 
+$pid = $thisrow['profilefieldid']; 
+$vbulletin->db->query_write("UPDATE " . TABLE_PREFIX . "profilefield SET displayorder = profilefieldid WHERE profilefieldid = last_insert_id()"); 
+
+$vbulletin->db->query_write(" 
+    INSERT INTO " . TABLE_PREFIX . "phrase 
+        ( 
+            varname, fieldname, text, product, username
+        ) 
+    VALUES 
+        ( 
+            'field" . $pid . "_title', 'cprofilefield', '{$preInstall['profile_field_label']}', 'heatware', 'heat23'
+        ), 
+        ( 
+            'field" . $pid . "_desc', 'cprofilefield', '{$preInstall['profile_field_description']}', 'heatware', 'heat23'
+        ) 
+"); 
+
+$vbulletin->db->query_write("ALTER TABLE`" . TABLE_PREFIX . "userfield` ADD field" . $pid . " MEDIUMTEXT");  
+
+require_once(DIR . '/includes/adminfunctions_profilefield.php');
+require_once(DIR . '/includes/adminfunctions_language.php');
+build_language();
+build_profilefield_cache();
+
+            ]]>
+            </installcode>
+            <uninstallcode>
+                <![CDATA[
+$vbulletin->db->hide_errors();
+
+require_once('./includes/class_dbalter.php');
+require_once('./heatware_config.php');
+require_once('./heatware_common.php');
+$helper = new HW_Helper($configAll);
+
+$dbalter = new vB_Database_Alter_MySQL($db);
+$fieldnum = $helper->get_fieldnum(); 
+$fieldstr = 'field' . $fieldnum; 
+
+$vbulletin->db->query_write("DROP table `".TABLE_PREFIX."heatware_stats`");
+$vbulletin->db->query_write("DELETE FROM " . TABLE_PREFIX . "profilefield  WHERE profilefieldid = " . $fieldnum); 
+$vbulletin->db->query_write("DELETE FROM " . TABLE_PREFIX . "phrase WHERE product='heatware'"); 
+$vbulletin->db->query_write("ALTER TABLE`" . TABLE_PREFIX . "userfield` DROP COLUMN " . $fieldstr);  
+
+require_once(DIR . '/includes/adminfunctions_profilefield.php');
+require_once(DIR . '/includes/adminfunctions_language.php');
+build_language();
+build_profilefield_cache();  
+]]>
+            </uninstallcode>
+        </code>
+    </codes>
+    <templates>
+        <template name="memberinfo_block_heatware" templatetype="template" date="1463680245" version="1.0.0"><![CDATA[
+ <div id="view-heatware" class="<vb:if condition="$selected_tab == 'heatware'">selected_view_section<vb:else />view_section</vb:if><vb:if condition="$userinfo['userid'] != $bbuserinfo['userid']"> vm_other_prof</vb:if>">
+    {vb:raw php_include}
+</div>
+
+    ]]></template>
+    </templates>
+    <plugins>
+        <plugin active="1" executionorder="5" product="vbulletin">
+            <title>HeatWare Profile Tab</title>
+            <hookname>member_complete</hookname>
+            <phpcode><![CDATA[
+               
+if (isset($vbulletin->GPC['tab']))
+{
+    $selected_tab = $vbulletin->GPC['tab'];
+}
+require_once(DIR . '/heatware_common.php');
+$helper = new HW_Helper($configAll);
+
+if ($helper->show_profile_tab($vbulletin->GPC['userid']))
+{
+    //require_once('./heatware_config.php');
+
+    $blockinfo['title'] = $preInstall['profile_tab_name'];
+    $blockid = "heatware";
+    $taburl = $memberurl = fetch_seo_url('member', $prepared) . "&amp;tab=heatware#heatware";
+
+    $templater = vB_Template::create('memberinfo_tab');
+    $templater->register('selected_tab', $selected_tab);
+    $templater->register('relpath', $relpath);
+    $templater->register('blockinfo', $blockinfo);
+    $templater->register('blockid', $blockid);
+    $templater->register('taburl', $taburl);
+    $template_hook['profile_tabs_last'] .= $templater->render();  
+
+    ob_start();
+    require_once(DIR . '/heatware_profile_tab.php');
+    $php_include = ob_get_contents();
+    ob_end_clean();
+    vB_Template::preRegister('member_complete',array('php_include' => $php_include));
+
+    $templater = vB_Template::create('memberinfo_block_heatware');
+    $templater->register('selected_tab', $selected_tab);
+    $templater->register('php_include', $php_include);
+    $template_hook['profile_tabs'] .= $templater->render();
+ }
+ 
+            ]]></phpcode>
+        </plugin>
+        
+    <plugin active="1" executionorder="5" product="heatware">
+    <title>HeatWare Postbit Display</title>
+    <hookname>postbit_display_complete</hookname>
+    <phpcode><![CDATA[
+require_once(DIR . '/heatware_common.php');
+$helper = new HW_Helper($configAll);
+$field = 'field' . $helper->get_fieldnum();
+if(strtolower($post[$field]) == 'yes')
+{
+   $row = vB::$db->query_first("SELECT * from ".TABLE_PREFIX."heatware_stats WHERE userid='{$post['userid']}'");
+   
+if(isset($row['eval_total']) && $row['eval_total'] != '')
+{
+ $template_hook['postbit_userinfo_right_after_posts'] .= "<dt>HeatWare</dt> <dd><a href=\"http://www.heatware.com/u/{$row['heatware_user_id']}\" target=\"_blank\">{$row['eval_pos']}-{$row['eval_neu']}-{$row['eval_neg']}</a></dd>";
+}
+}]]></phpcode>
+	</plugin>
+    
+    </plugins>
+    <phrases>
+        <phrasetype name="Scheduled Tasks" fieldname="cron">
+            <phrase name="task_heatware_check_profile_desc" date="1464021700" username="heat23" version="1.0.0"><![CDATA[Check HeatWare profile option if enabled/disabled]]></phrase>
+            <phrase name="task_heatware_check_profile_log" date="1464021700" username="heat23" version="1.0.0" />
+            <phrase name="task_heatware_check_profile_title" date="1464021700" username="heat23" version="1.0.0"><![CDATA[HeatWare - Check Profile Option]]></phrase>
+            <phrase name="task_heatware_fetch_stats_desc" date="1464021700" username="heat23" version="1.0.0"><![CDATA[Call HeatWare API to update user feedback stats]]></phrase>
+            <phrase name="task_heatware_fetch_stats_log" date="1464021700" username="heat23" version="1.0.0" />
+            <phrase name="task_heatware_fetch_stats_title" date="1464021700" username="heat23" version="1.0.0"><![CDATA[HeatWare - Get Feedback API]]></phrase>
+            <phrase name="task_heatware_find_user_desc" date="1464021700" username="heat23" version="1.0.0"><![CDATA[Call HeatWare API to find forum user]]></phrase>
+            <phrase name="task_heatware_find_user_log" date="1464021700" username="heat23" version="1.0.0" />
+            <phrase name="task_heatware_find_user_title" date="1464021700" username="heat23" version="1.0.0"><![CDATA[HeatWare - Find User API]]></phrase>
+            <phrase name="task_heatware_phone_home_desc" date="1464021700" username="heat23" version="1.0.0"><![CDATA[Call HeatWare API to sent plugin usage information]]></phrase>
+            <phrase name="task_heatware_phone_home_log" date="1464021700" username="heat23" version="1.0.0" />
+            <phrase name="task_heatware_phone_home_title" date="1464021700" username="heat23" version="1.0.0"><![CDATA[HeatWare - Phone Home API]]></phrase>
+        </phrasetype>
+    </phrases>
+    <cronentries>
+        <cron varname="heatware_check_profile" active="1" loglevel="1">
+            <filename>./includes/cron/heatware_cron_check_profile.php</filename>
+            <scheduling weekday="-1" day="-1" hour="-1"  minute="1,10,20,30,40,50"  />
+        </cron>
+        <cron varname="heatware_fetch_stats" active="1" loglevel="1">
+            <filename>./includes/cron/heatware_cron_fetch_stats.php</filename>
+            <scheduling weekday="-1" day="-1" hour="-1" minute="5,15,25,35,45,55"/>
+        </cron>
+        <cron varname="heatware_find_user" active="1" loglevel="1">
+            <filename>./includes/cron/heatware_cron_find_user.php</filename>
+            <scheduling weekday="-1" day="-1" hour="-1" minute="2,11,21,31,41,51"/>
+        </cron>
+         <cron varname="heatware_phone_home" active="1" loglevel="1">
+            <filename>./includes/cron/heatware_cron_phone_home.php</filename>
+            <scheduling weekday="-1" day="-1" hour="2" minute="-1" />
+        </cron>
+    </cronentries>
+</product>
