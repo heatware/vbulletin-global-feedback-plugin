@@ -1,13 +1,9 @@
 Official HeatWare Plugin for vBulletin
 ======
-**asfasfasf** is a software for things. Short description here.
-
-#### Screenshot
-![Screenshot software](http://url/screenshot-software.png "screenshot software")
+Since 1999, [HeatWare](http://wwww.heatware.com) has provided free use of its user feedback system, enabling forum users to buy/sell/trade with confidence. We have officially released a vBulletin plugin that allows forums to display user feedback statistics from HeatWare in the user's forum profile. HeatWare is a ***global*** feedback system, therefore there is no need to build reputation on EACH forum you visit.
 
 ## Download
-* [Version X.Y](https://github.com/username/sw-name/archive/master.zip)
-* Other Versions
+* [Version 1.0](link)
 
 ## Usage
 ```$ git clone https://github.com/username/software-project.git
@@ -15,29 +11,7 @@ Official HeatWare Plugin for vBulletin
 
 ## Contributors
 
-### Contributors on GitHub
-* [Contributors](https://github.com/username/sw-name/graphs/contributors)
-
-### Translations
-* [Transifex](https://www.transifex.com/projects/p/sw-name/)
-
-### Third party libraries
-* see [LIBRARIES](https://github.com/username/sw-name/blob/master/LIBRARIES.md) files
-
-## License 
-* see [LICENSE](https://github.com/username/sw-name/blob/master/LICENSE.md) file
-
-## Version 
-* Version X.Y
-
-## How-to use this code
-* see [INSTRUCTIONS](https://github.com/username/sw-name/blob/master/INSTRUCTIONS.md) file
-
 ## Contact
-#### Developer/Company
-* Homepage: 
-* e-mail: 
-* Twitter: [@twitterhandle](https://twitter.com/twitterhandle "twitterhandle on twitter")
-* other communication/social media
-
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=username&url=https://github.com/username/sw-name&title=sw-name&language=&tags=github&category=software) 
+#### heat23
+* Homepage: http://www.heatware.com/u/2 
+* E-mail: heatware.support(at)gmail(dot)com 
