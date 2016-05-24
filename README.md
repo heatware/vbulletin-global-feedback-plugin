@@ -7,7 +7,7 @@ Since 1999, [HeatWare](http://wwww.heatware.com) has provided free use of its us
 * **Not Supported:** vBulletin 5.x
 
 ## Download
-* [Version 1.0](link)
+* [Version 1.0.0](https://github.com/heatware/vbulletin-global-feedback-plugin/files/280080/heatware_vb4_1.0.0.zip)
 
 ## Installation
 * Download the latest release and unzip the package
