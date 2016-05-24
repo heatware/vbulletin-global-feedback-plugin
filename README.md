@@ -21,8 +21,11 @@ After the plugin is installed, an option called **HeatWare Feedback** will appea
 * A tab called ***HeatWare Feedback*** will be added to the user's profile
 * When a user posts a message, the Positive/Negative/Neutral feedback count will be displayed under the user's avatar
 
+![vBulletin HeatWare Plugin](http://i.imgur.com/Q6gkIB7.png "vBulletin HeatWare Plugin")
+![vBulletin HeatWare Plugin](http://i.imgur.com/Woikj1L.png "vBulletin HeatWare Plugin")
+
 ## Implementation / Design
-* vBulleten Scheduled Tasks will run every 10 minutes to look for any user that enabled the plugin profile option. In addition, it will also search for HeatWare users with the forum user's email address, and fetch the feedback statistics.
+* vBulletin Scheduled Tasks will run every 10 minutes to look for any user that enabled the plugin profile option. In addition, it will also search for HeatWare users with the forum user's email address, and fetch the feedback statistics.
 * A scheduled task will run once per day to send HeatWare plugin usage statistics.
 * User's HeatWare statistics will update no more than once per day
 * There is a limit on how many API calls will be made per invocation to reduce forum and HeatWare load. 
