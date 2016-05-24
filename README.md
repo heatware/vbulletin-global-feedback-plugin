@@ -30,6 +30,12 @@ After the plugin is installed, an option called **HeatWare Feedback** will appea
 * User's HeatWare statistics will update no more than once per day
 * There is a limit on how many API calls will be made per invocation to reduce forum and HeatWare load. 
 
+## Contributors
+I am looking for the community to help with bug fixes, feature development, and testing compatibility with various vBulletin versions.
+
+## Versions
+### 1.0.0
+* Initial release
 ## Contact
 #### heat23
 * Homepage: http://www.heatware.com/u/2 
